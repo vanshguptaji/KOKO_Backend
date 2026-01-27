@@ -52,7 +52,7 @@ const initializeGemini = () => {
   try {
     genAI = new GoogleGenerativeAI(apiKey);
     model = genAI.getGenerativeModel({ 
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.0-flash',
       systemInstruction: VETERINARY_SYSTEM_PROMPT,
     });
     console.log('✅ Gemini AI initialized successfully');

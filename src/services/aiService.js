@@ -31,14 +31,27 @@ class AIService {
       const model = getModel();
       
       // Build chat history for context
-      const history = conversationHistory.map(msg => ({
+      let history = conversationHistory.map(msg => ({
         role: msg.role === 'user' ? 'user' : 'model',
         parts: [{ text: msg.content }],
       }));
 
+      // Gemini requires the first message to be from 'user'
+      // Filter history to ensure it starts with a user message
+      const firstUserIndex = history.findIndex(msg => msg.role === 'user');
+      if (firstUserIndex > 0) {
+        history = history.slice(firstUserIndex);
+      } else if (firstUserIndex === -1) {
+        // No user messages in history, start fresh
+        history = [];
+      }
+
+      // Keep last 10 messages for context
+      history = history.slice(-10);
+
       // Start chat with history
       const chat = model.startChat({
-        history: history.slice(-10), // Keep last 10 messages for context
+        history: history,
       });
 
       // Generate response
@@ -58,7 +71,8 @@ class AIService {
         isAppointmentIntent: hasAppointmentIntent,
       };
     } catch (error) {
-      console.error('AI generation error:', error);
+      console.error('AI generation error:', error.message);
+      console.error('Full error:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
       
       // Handle specific error types
       if (error.message?.includes('SAFETY')) {
