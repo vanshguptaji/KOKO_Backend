@@ -1,7 +1,7 @@
 {
   "name": "koko_backend",
   "version": "1.0.0",
-  "description": "Veterinary Chatbot SDK Backend - AI-powered chatbot for veterinary Q&A and appointment booking",
+  "description": "Veterinary Chatbot SDK Backend - Rule-based chatbot for veterinary Q&A and appointment booking (No AI API required)",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -16,8 +16,8 @@
     "veterinary",
     "chatbot",
     "sdk",
-    "gemini",
-    "ai"
+    "rule-based",
+    "appointment-booking"
   ],
   "author": "Vansh Gupta",
   "license": "ISC",
@@ -27,7 +27,6 @@
   },
   "homepage": "https://github.com/vanshguptaji/KOKO_Backend#readme",
   "dependencies": {
-    "@google/generative-ai": "^0.21.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.2.1",

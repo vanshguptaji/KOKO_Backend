@@ -1,8 +1,9 @@
 /**
  * Veterinary Chatbot SDK - Backend Server
  * 
- * An AI-powered chatbot backend for veterinary Q&A and appointment booking.
- * Built with Node.js, Express, MongoDB, and Google Gemini AI.
+ * A rule-based chatbot backend for veterinary Q&A and appointment booking.
+ * Built with Node.js, Express, and MongoDB.
+ * No external AI API keys required.
  */
 
 require('dotenv').config();
@@ -13,7 +14,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 
-// Database and AI configuration
+// Database configuration
 const { connectDB } = require('./src/config/database');
 const { initializeGemini } = require('./src/config/gemini');
 
@@ -132,7 +133,8 @@ app.get('/', (req, res) => {
   res.json({
     success: true,
     message: 'Veterinary Chatbot SDK API',
-    version: '1.0.0',
+    version: '2.0.0',
+    mode: 'Rule-based (No AI API required)',
     endpoints: {
       health: 'GET /api/health',
       chat: {
@@ -142,11 +144,23 @@ app.get('/', (req, res) => {
         reset: 'DELETE /api/chat/session/:sessionId',
       },
       appointments: {
+        // Public endpoints
+        services: 'GET /api/appointments/services',
+        availableDates: 'GET /api/appointments/available-dates',
+        availableSlots: 'GET /api/appointments/available-slots/:date',
+        create: 'POST /api/appointments',
+        bySession: 'GET /api/appointments/session/:sessionId',
+        // Admin endpoints
         list: 'GET /api/appointments',
         stats: 'GET /api/appointments/stats',
+        today: 'GET /api/appointments/today',
+        upcoming: 'GET /api/appointments/upcoming',
+        byDate: 'GET /api/appointments/date/:date',
         byId: 'GET /api/appointments/:id',
-        bySession: 'GET /api/appointments/session/:sessionId',
+        update: 'PUT /api/appointments/:id',
         updateStatus: 'PATCH /api/appointments/:id/status',
+        cancel: 'PATCH /api/appointments/:id/cancel',
+        delete: 'DELETE /api/appointments/:id',
       },
     },
     sdk: {
@@ -181,7 +195,7 @@ const startServer = async () => {
     // Connect to MongoDB
     await connectDB();
     
-    // Initialize Gemini AI
+    // Initialize rule-based chatbot (no AI API required)
     initializeGemini();
     
     // Start server
@@ -195,6 +209,7 @@ const startServer = async () => {
       console.log(`  📦 SDK: http://localhost:${PORT}/chatbot.js`);
       console.log('═══════════════════════════════════════════════');
       console.log(`  Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log('  Mode: Rule-based (No AI API required)');
       console.log('═══════════════════════════════════════════════');
     });
   } catch (error) {

@@ -1,14 +1,24 @@
 # 🐾 Veterinary Chatbot SDK
 
-An AI-powered, website-embeddable chatbot for veterinary Q&A and appointment booking. Built with Node.js, Express, MongoDB, and Google Gemini AI.
+A rule-based, website-embeddable chatbot for veterinary Q&A and appointment booking. Built with Node.js, Express, and MongoDB. **No AI API keys required!**
 
 ## 📌 Overview
 
 This project provides a complete backend solution for a veterinary chatbot that can:
-- Answer pet care and veterinary-related questions using AI
-- Book veterinary appointments through a conversational flow
+- Answer pet care and veterinary-related questions using pattern matching and FAQs
+- Detect appointment booking intent through keyword matching
+- Book veterinary appointments through a conversational state machine flow
 - Be embedded into any website with a single script tag
 - Persist conversations and appointments in MongoDB
+
+### ✅ Key Features
+
+- **No AI API Required** - Works completely offline with rule-based logic
+- **Intent Detection** - Keyword and regex-based intent recognition
+- **Slot Filling** - Extracts dates, times, names, and phone numbers from natural language
+- **State Machine** - Predictable conversation flow for appointment booking
+- **FAQ System** - Pre-defined responses for common pet care questions
+- **Fully Customizable** - Easy to add new intents, keywords, and responses
 
 ## 🏗️ Architecture
 
@@ -36,10 +46,30 @@ This project provides a complete backend solution for a veterinary chatbot that 
 │         └────────────────┬┘                  │             │
 │                          ▼                   ▼             │
 │         ┌─────────────────────────────────────────────┐   │
-│         │              External Services              │   │
-│         │  - Google Gemini AI   - MongoDB             │   │
+│         │              Data Storage                   │   │
+│         │              - MongoDB                      │   │
 │         └─────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
+```
+
+### Conversation Flow (State Machine)
+
+```
+START
+ ↓
+User says "book appointment"
+ ↓
+ASK_OWNER_NAME → User provides name
+ ↓
+ASK_PET_NAME → User provides pet name
+ ↓
+ASK_PHONE → User provides phone
+ ↓
+ASK_DATE_TIME → User provides date/time
+ ↓
+CONFIRM → User says yes/no
+ ↓
+BOOKED ✅ (saved to MongoDB)
 ```
 
 ### Project Structure
@@ -47,9 +77,9 @@ This project provides a complete backend solution for a veterinary chatbot that 
 ```
 ├── src/
 │   ├── config/           # Configuration files
-│   │   ├── constants.js  # App constants & messages
+│   │   ├── constants.js  # Keywords, FAQs, messages
 │   │   ├── database.js   # MongoDB connection
-│   │   └── gemini.js     # Google Gemini AI setup
+│   │   └── gemini.js     # Stub (backward compatibility)
 │   │
 │   ├── controllers/      # HTTP request handlers
 │   │   ├── chatController.js
@@ -69,7 +99,7 @@ This project provides a complete backend solution for a veterinary chatbot that 
 │   │   └── appointmentRoutes.js
 │   │
 │   ├── services/         # Business logic layer
-│   │   ├── aiService.js      # Gemini AI integration
+│   │   ├── aiService.js      # Rule-based intent detection
 │   │   ├── chatService.js    # Chat orchestration
 │   │   ├── conversationService.js
 │   │   └── appointmentService.js
@@ -94,7 +124,6 @@ This project provides a complete backend solution for a veterinary chatbot that 
 
 - Node.js 18+ 
 - MongoDB (local or Atlas)
-- Google Gemini API Key
 
 ### Installation
 
@@ -119,16 +148,10 @@ This project provides a complete backend solution for a veterinary chatbot that 
    PORT=3000
    NODE_ENV=development
    MONGODB_URI=mongodb://localhost:27017/vet_chatbot
-   GEMINI_API_KEY=your_gemini_api_key_here
    ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
    ```
 
-4. **Get a Gemini API Key**
-   - Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
-   - Create a new API key
-   - Add it to your `.env` file
-
-5. **Start MongoDB**
+4. **Start MongoDB**
    ```bash
    # If using local MongoDB
    mongod
@@ -136,7 +159,7 @@ This project provides a complete backend solution for a veterinary chatbot that 
    # Or use MongoDB Atlas connection string in .env
    ```
 
-6. **Run the server**
+5. **Run the server**
    ```bash
    # Development mode (with hot reload)
    npm run dev
@@ -145,7 +168,7 @@ This project provides a complete backend solution for a veterinary chatbot that 
    npm start
    ```
 
-7. **Access the application**
+6. **Access the application**
    - API: http://localhost:3000/
    - Demo: http://localhost:3000/index.html
    - SDK: http://localhost:3000/chatbot.js
