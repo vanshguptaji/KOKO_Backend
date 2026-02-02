@@ -5,6 +5,13 @@
  */
 
 const { MESSAGES, APPOINTMENT_KEYWORDS, GREETING_KEYWORDS, FAQ_RESPONSES } = require('../config/constants');
+const { 
+  isBookingIntent, 
+  extractBookingDetails, 
+  fixMisspellings, 
+  expandAbbreviations, 
+  normalizeText 
+} = require('../utils/appointmentIntentMatcher');
 
 /**
  * Intent types
@@ -25,10 +32,38 @@ const INTENTS = {
 class AIService {
   /**
    * Check if the message contains appointment booking intent
+   * Uses comprehensive intent matcher with misspelling/abbreviation handling
    */
   static detectAppointmentIntent(message) {
-    const lowerMessage = message.toLowerCase();
-    return APPOINTMENT_KEYWORDS.some(keyword => lowerMessage.includes(keyword));
+    // Use the comprehensive intent matcher
+    const intentResult = isBookingIntent(message);
+    
+    // Store the intent result for later use (extracting details)
+    this._lastIntentResult = intentResult;
+    
+    return intentResult.isBooking;
+  }
+
+  /**
+   * Get the last booking intent result with details
+   */
+  static getLastBookingIntentResult() {
+    return this._lastIntentResult || null;
+  }
+
+  /**
+   * Extract booking details from message (pet type, date, time, service)
+   */
+  static extractBookingDetailsFromMessage(message) {
+    return extractBookingDetails(message);
+  }
+
+  /**
+   * Normalize and fix user input (typos, abbreviations)
+   */
+  static normalizeUserInput(message) {
+    const normalized = normalizeText(message);
+    return fixMisspellings(expandAbbreviations(normalized));
   }
 
   /**

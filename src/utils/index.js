@@ -6,9 +6,11 @@
 const responseHelper = require('./responseHelper');
 const validators = require('./validators');
 const appointmentValidator = require('./appointmentValidator');
+const appointmentIntentMatcher = require('./appointmentIntentMatcher');
 
 module.exports = {
   ...responseHelper,
   ...validators,
   appointmentValidator,
+  appointmentIntentMatcher,
 };
